@@ -1,59 +1,88 @@
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "../../main";
+import { Heading } from "./types";
+import store from "../../redux";
+import { openToast } from "../../redux/toastSlice";
 
-// import api from "src/config/api";
+export const useUpdateHeadingMutation = () => {
+  return useMutation({
+    mutationKey: ["updateHeading"],
 
-// import { Heading } from "./types";
+    mutationFn: async (options: { id: string; data: Partial<Heading> }) => {
+      console.log(options);
+      const response = await fetch(
+        `http://localhost:4000/heading/${options.id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(options.data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-// export const useUpdateHeadingMutation = () => {
-//   const queryClient = useQueryClient();
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    },
 
-//   return useMutation({
-//     mutationKey: ["updateHeading"],
-//     mutationFn: (options: { id: string; data: Partial<Heading> }) => {
-//       return api.put(`heading/${options.id}`, options.data);
-//     },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["headings"],
+      });
+      store.dispatch(openToast({ message: "Rubro editado" }));
+    },
 
-//     onSuccess: async () =>
-//       await queryClient.invalidateQueries({
-//         queryKey: ["headings"],
-//       }),
-//   });
-// };
+    onError() {
+      store.dispatch(
+        openToast({ message: "Error editando un rubro", error: true })
+      );
+    },
+  });
+};
 
-// export const usePostHeadingMutation = () => {
-//   const queryClient = useQueryClient();
+export const usePostHeadingMutation = () => {
+  return useMutation({
+    mutationKey: ["postHeading"],
 
-//   return useMutation({
-//     mutationKey: ["postHeading"],
-//     mutationFn: (data: Partial<Heading>) => {
-//       return api.post("heading/", data);
-//     },
+    mutationFn: async (data: Partial<Heading>) => {
+      const response = await fetch("http://localhost:4000/heading/", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
 
-//     onSuccess: async () =>
-//       await queryClient.invalidateQueries({
-//         queryKey: ["headings"],
-//       }),
-//   });
-// };
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    },
 
-// export const useDeleteHeadingMutation = () => {
-//   const queryClient = useQueryClient();
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: ["headings"],
+      }),
+  });
+};
 
-//   return useMutation({
-//     mutationKey: ["deleteHeading"],
-//     mutationFn: (id: string) => {
-//       return api.delete(`heading/delete/${id}`);
-//     },
+export const useDeleteHeadingMutation = () => {
+  return useMutation({
+    mutationKey: ["deleteHeading"],
 
-//     onSuccess: async () =>
-//       await queryClient.invalidateQueries({
-//         queryKey: ["headings"],
-//       }),
-//   });
-// };
+    mutationFn: async (id: string) => {
+      const response = await fetch(`heading/delete/${id}`, {
+        method: "PATCH",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    },
+
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: ["headings"],
+      }),
+  });
+};
 
 export const useActivateHeadingMutation = () => {
   return useMutation({
@@ -69,12 +98,22 @@ export const useActivateHeadingMutation = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
+      return response;
     },
 
-    onSuccess: async () =>
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["headings"],
-      }),
+      });
+      store.dispatch(openToast({ message: "Rubro activado" }));
+    },
+
+    onError() {
+      store.dispatch(
+        openToast({ message: "Error activando un rubro", error: true })
+      );
+    },
   });
 };
 
@@ -92,11 +131,24 @@ export const useDisableHeadingMutation = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
+      const realResponse = await response.json();
+
+      return realResponse;
     },
 
-    onSuccess: async () =>
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["headings"],
-      }),
+      });
+
+      store.dispatch(openToast({ message: "Rubro desactivado" }));
+    },
+
+    onError() {
+      store.dispatch(
+        openToast({ message: "Error activando un rubro", error: true })
+      );
+    },
   });
 };

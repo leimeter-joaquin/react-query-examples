@@ -17,7 +17,7 @@ const getHeadings = async (): Promise<ServerResponse<Heading[]>> => {
     }
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data; // You can return the data if needed.
   } catch (error) {
     console.error("Error fetching data:", error.message);

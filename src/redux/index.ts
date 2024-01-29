@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import testReducer from "./testSlice";
+import toastReducer from "./toastSlice";
 
 const store = configureStore({
   reducer: {
-    test: testReducer,
+    toast: toastReducer,
   },
   devTools: true,
 });
