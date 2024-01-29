@@ -141,13 +141,10 @@ function DeActivateButton(props: { id: string }) {
         closeModal={() => setOpenModal(false)}
         onAccept={() =>
           disableHeadingMutation.mutate(props.id, {
-            // onSettled: () => {
-            //   setOpenModal(false);
-            //   console.log("settled");
-            // },
-            // onSuccess: () => {
-            //   console.log("success");
-            // },
+            onSettled: () => {
+              //! There is no need to close the modal in this manner (works perfectly when the mutation isSettled) since the coditional showing of the <Loading /> component in the App component will un-mount it's children (amongs them this modal). This happens because of the invalidation of the "headings" query.
+              setOpenModal(false);
+            },
           })
         }
         isPending={disableHeadingMutation.isPending}
@@ -225,7 +222,7 @@ function App() {
 
   console.log("re-render");
 
-  if (response.isFetching) return <div>Loading...</div>;
+  if (response.isLoading) return <div>Loading...</div>;
 
   if (response.isSuccess)
     return (
