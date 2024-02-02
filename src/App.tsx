@@ -1,11 +1,11 @@
-// import List from "./Examples/List";
-import MutationIsPending from "./Examples/mutationIsPending";
+import List from "./Examples/List";
+// import MutationIsPending from "./Examples/mutationIsPending";
 
 function App() {
   return (
     <>
-      {/* <List /> */}
-      <MutationIsPending />
+      <List />
+      {/* <MutationIsPending /> */}
     </>
   );
 }

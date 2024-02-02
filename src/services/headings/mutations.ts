@@ -109,7 +109,7 @@ export const useActivateHeadingMutation = () => {
       store.dispatch(openToast({ message: "Rubro activado" }));
     },
 
-    onError() {
+    onError: () => {
       store.dispatch(
         openToast({ message: "Error activando un rubro", error: true })
       );

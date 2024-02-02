@@ -215,7 +215,7 @@ function List() {
       <ul>
         {response.data.data.map((i) => {
           return (
-            <li>
+            <li key={i._id}>
               <p>{i.name}</p>
               <DeleteButton id={i._id} />
               <EditButton id={i._id} heading={i} />
